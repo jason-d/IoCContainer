@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using IoCContainer._1_SimpleContainer;
 
 namespace IoCContainer._1_SimpleContainer.IoCContainer
 {

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using IoCContainer.TestObjects;
-using IoCContainer._1_SimpleContainer.IoCContainer;
+using IoCContainer._2_HandlingDependencies.IoCContainer;
 using NUnit.Framework;
 
-namespace IoCContainer._1_SimpleContainer.Tests
+namespace IoCContainer._2_HandlingDependencies.Tests
 {
 	[TestFixture]
 	class ContainerTests
@@ -41,6 +41,21 @@ namespace IoCContainer._1_SimpleContainer.Tests
 			var counter = container.Resolve<Counter>();
 
 			Assert.IsNull(counter);
+		}
+
+		[Test]
+		public void Should_resolve_dependencies()
+		{
+			var container = new Container();
+			container.Register<ICounter, Counter>();
+			container.Register<IRepository, Repository>();
+			container.Register<Processor, Processor>();
+
+			var processor = container.Resolve<Processor>();
+
+			Assert.IsInstanceOf<Processor>(processor);
+			Assert.IsInstanceOf<Counter>(processor.Counter);
+			Assert.IsInstanceOf<Repository>(processor.Repository);
 		}
 	}
 }
