@@ -49,6 +49,9 @@
     <Compile Include="2-HandlingDependencies\IoCContainer\Container.cs" />
     <Compile Include="2-HandlingDependencies\IoCContainer\Registration.cs" />
     <Compile Include="2-HandlingDependencies\Tests\ContainerTests.cs" />
+    <Compile Include="3-Singleton\IoCContainer\Container.cs" />
+    <Compile Include="3-Singleton\IoCContainer\Registration.cs" />
+    <Compile Include="3-Singleton\Tests\ContainerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestObjects\Counter.cs" />
     <Compile Include="TestObjects\ICounter.cs" />
