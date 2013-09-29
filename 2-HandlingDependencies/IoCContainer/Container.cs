@@ -30,27 +30,44 @@ namespace IoCContainer._2_HandlingDependencies.IoCContainer
 		}
 
 		public T Resolve<T>()
-			where T : class
 		{
 			var requestedType = typeof(T);
 
-			return Resolve(requestedType) as T;
+			return (T)Resolve(requestedType);
 		}
 
 		private object Resolve(Type requestedType)
 		{
-			var registration = _registrations.Where(reg => reg.ConcreteType == requestedType)
-				.FirstOrDefault();
+			var registration = GetRegistration(requestedType);
 
 			object instance = null;
 			if (registration != null)
 			{
 				var constructorParameters = ResolveConstructorDependencies(registration.ConcreteType);
 
-				instance = Activator.CreateInstance(registration.ConcreteType, constructorParameters.ToArray());
+				instance = Activator.CreateInstance(registration.ConcreteType, 
+					constructorParameters.ToArray());
 			}
 
 			return instance;
+		}
+
+		private Registration GetRegistration(Type type)
+		{
+			Registration registration = null;
+
+			if (type.IsInterface)
+			{
+				registration = _registrations.Where(reg => reg.AbstractType == type)
+											 .FirstOrDefault();
+			}
+			else
+			{
+				registration = _registrations.Where(reg => reg.ConcreteType == type)
+											 .FirstOrDefault();
+			}
+
+			return registration;
 		}
 
 		private List<object> ResolveConstructorDependencies(Type type)
@@ -62,10 +79,7 @@ namespace IoCContainer._2_HandlingDependencies.IoCContainer
 
 			foreach (var parameterInfo in parameterInfos)
 			{
-				var registration = _registrations.Where(
-					reg => reg.AbstractType == parameterInfo.ParameterType).FirstOrDefault();
-
-				object parameterInstance = Resolve(registration.ConcreteType);
+				object parameterInstance = Resolve(parameterInfo.ParameterType);
 
 				constructorParameters.Add(parameterInstance);
 			}

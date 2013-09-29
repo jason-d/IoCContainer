@@ -30,12 +30,10 @@ namespace IoCContainer._1_SimpleContainer.IoCContainer
 		}
 
 		public T Resolve<T>()
-			where T : class
 		{
 			var requestedType = typeof(T);
 
-			var registration = _registrations.Where(reg => reg.ConcreteType == requestedType)
-				.FirstOrDefault();
+			Registration registration = GetRegistration(requestedType);
 
 			object instance = null;
 			if (registration != null)
@@ -43,7 +41,25 @@ namespace IoCContainer._1_SimpleContainer.IoCContainer
 				instance = Activator.CreateInstance(registration.ConcreteType);
 			}
 
-			return instance as T;
+			return (T)instance;
+		}
+
+		private Registration GetRegistration(Type type)
+		{
+			Registration registration = null;
+
+			if (type.IsInterface)
+			{
+				registration = _registrations.Where(reg => reg.AbstractType == type)
+											 .FirstOrDefault();
+			}
+			else
+			{
+				registration = _registrations.Where(reg => reg.ConcreteType == type)
+											 .FirstOrDefault();
+			}
+
+			return registration;
 		}
 	}
 }

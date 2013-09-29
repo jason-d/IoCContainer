@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using IoCContainer._3_Singleton.IoCContainer;
 
 namespace IoCContainer._4_MethodChainingSyntax.IoCContainer
 {
@@ -48,17 +47,15 @@ namespace IoCContainer._4_MethodChainingSyntax.IoCContainer
 		}
 
 		public T Resolve<T>()
-			where T : class
 		{
 			var requestedType = typeof(T);
 
-			return Resolve(requestedType) as T;
+			return (T)Resolve(requestedType);
 		}
 
 		private object Resolve(Type requestedType)
 		{
-			var registration = _registrations.Where(reg => reg.ConcreteType == requestedType)
-											 .FirstOrDefault();
+			var registration = GetRegistration(requestedType);
 
 			object instance = null;
 			if (registration != null)
@@ -69,7 +66,8 @@ namespace IoCContainer._4_MethodChainingSyntax.IoCContainer
 				{
 					var constructorParameters = ResolveConstructorDependencies(registration.ConcreteType);
 
-					instance = Activator.CreateInstance(registration.ConcreteType, constructorParameters.ToArray());
+					instance = Activator.CreateInstance(registration.ConcreteType,
+						constructorParameters.ToArray());
 
 					if (registration.IsSingleton)
 					{
@@ -81,6 +79,24 @@ namespace IoCContainer._4_MethodChainingSyntax.IoCContainer
 			return instance;
 		}
 
+		private Registration GetRegistration(Type type)
+		{
+			Registration registration = null;
+
+			if (type.IsInterface)
+			{
+				registration = _registrations.Where(reg => reg.AbstractType == type)
+											 .FirstOrDefault();
+			}
+			else
+			{
+				registration = _registrations.Where(reg => reg.ConcreteType == type)
+											 .FirstOrDefault();
+			}
+
+			return registration;
+		}
+
 		private List<object> ResolveConstructorDependencies(Type type)
 		{
 			var constructorInfo = type.GetConstructors().First();
@@ -90,10 +106,7 @@ namespace IoCContainer._4_MethodChainingSyntax.IoCContainer
 
 			foreach (var parameterInfo in parameterInfos)
 			{
-				var registration = _registrations.Where(
-					reg => reg.AbstractType == parameterInfo.ParameterType).FirstOrDefault();
-
-				object parameterInstance = Resolve(registration.ConcreteType);
+				object parameterInstance = Resolve(parameterInfo.ParameterType);
 
 				constructorParameters.Add(parameterInstance);
 			}
