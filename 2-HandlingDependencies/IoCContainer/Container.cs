@@ -43,7 +43,8 @@ namespace IoCContainer._2_HandlingDependencies.IoCContainer
 			object instance = null;
 			if (registration != null)
 			{
-				var constructorParameters = ResolveConstructorDependencies(registration.ConcreteType);
+				var constructorParameters = ResolveConstructorDependencies(
+					registration.ConcreteType);
 
 				instance = Activator.CreateInstance(registration.ConcreteType, 
 					constructorParameters.ToArray());

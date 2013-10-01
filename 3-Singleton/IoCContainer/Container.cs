@@ -48,7 +48,8 @@ namespace IoCContainer._3_Singleton.IoCContainer
 
 				if (instance == null)
 				{
-					var constructorParameters = ResolveConstructorDependencies(registration.ConcreteType);
+					var constructorParameters = ResolveConstructorDependencies(
+						registration.ConcreteType);
 
 					instance = Activator.CreateInstance(registration.ConcreteType, 
 						constructorParameters.ToArray());

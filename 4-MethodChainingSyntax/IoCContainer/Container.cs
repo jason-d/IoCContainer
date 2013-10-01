@@ -64,7 +64,8 @@ namespace IoCContainer._4_MethodChainingSyntax.IoCContainer
 
 				if (instance == null)
 				{
-					var constructorParameters = ResolveConstructorDependencies(registration.ConcreteType);
+					var constructorParameters = ResolveConstructorDependencies(
+						registration.ConcreteType);
 
 					instance = Activator.CreateInstance(registration.ConcreteType,
 						constructorParameters.ToArray());
